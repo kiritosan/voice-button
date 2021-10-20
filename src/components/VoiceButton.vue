@@ -1,8 +1,8 @@
 <template>
-    <div class="btn-wrapper" :class="voice ? 'voice-btn' : 'btn'">
+<!-- 为什么要“‘btn’”？ -->
+  <div class="btn-wrapper" :class="'btn'">
     <!-- 有链接就是a标签 没有就显示字符串 -->
-    <a v-if="url" :href="url" :target="blank ? '_blank' : ''">{{ value }}</a>
-    <template v-else>
+    <template>
       {{ value }}
     </template>
   </div>
@@ -10,7 +10,14 @@
 
 <script>
     export default {
+      data(){
+        return{
+          // val:'Play'
 
+        }
+      },
+      // props列表里的值需要加引号
+      props:['value']
     }
 </script>
 
