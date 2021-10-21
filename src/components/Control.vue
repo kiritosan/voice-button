@@ -66,6 +66,7 @@ export default {
     },
 }
 </script>
+
 <style lang="scss" scoped>
 .control-wrapper {
   position: fixed;
