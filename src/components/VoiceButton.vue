@@ -1,6 +1,6 @@
 <template>
 <!-- 为什么要“‘btn’”？ -->
-  <div class="btn-wrapper" :class="'btn'">
+  <div class="btn-wrapper" :class="'voice-btn'">
     <!-- 有链接就是a标签 没有就显示字符串 -->
     <template>
       {{ value }}
@@ -12,7 +12,7 @@
     export default {
       data(){
         return{
-          // val:'Play'
+          
 
         }
       },
