@@ -98,6 +98,7 @@
                 // 3.展示区
                 this.nowPlay = voice
                 // 4.播放结束后的善后
+                
                 // 播放时就约定好 播放结束后清空展示区 当前音频离开播放列表 剩下空值，使得索引不变
                 audio.onended = () => {
                     this.nowPlay = {}
