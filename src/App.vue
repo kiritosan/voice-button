@@ -55,7 +55,7 @@ export default {
       // nowPlay是一个对象，存放正在播放的voiceItem
       nowPlay:{},
       // 放弃了，加一个播放列表存储每个正在播放的音频 播放完的清除
-      playerList: new Map(),
+      playerList: new Array(),
       overlap:false
     }
   },
@@ -73,7 +73,7 @@ export default {
       play(voice) {
           // 设定不同情况下的key 不能重叠时，都设定为once，而从保证播放列表里只有一条音频
           // 在外部设置key变量
-          let key = ''
+          // 单次播放时
           if(!this.overlap){
             // 第一次播放，playerlist里还没有值
             // 当有once这个key后暂停它
@@ -82,11 +82,6 @@ export default {
             // 此时之前在播放列表里的音声还会播放
             // 需要取消掉
             this.stopPlay()
-            key = 'once'
-          }else{
-            // 重复播放的情况不用多做处理，默认就是重复播放状态
-            // 这里传入key是为了特定每个audio 好在以后同时暂停
-            key = new Date().getTime()
           }
         // todo ！！！播放逻辑
           // path 得到video路径
@@ -97,17 +92,24 @@ export default {
           // const key = new Date().getTime()
           const path = `${CDN}/${voice.path}`
           let audio = new Audio(path)
-          // key直接对应一个audio 不用.audio
-          this.playerList.set(key,audio)
           // 2.播放
           audio.play()
+          // 推到表里面的目的是之后统一暂停，所以在花括号结束前放入就行
+          // audio声明后到下花括号结束前 位置随便放
+          this.playerList.push(audio)
           // 3.展示区
           this.nowPlay = voice
           // 4.播放结束后的善后
-          // 播放时就约定好 播放结束后清空展示区 离开播放列表
+          // 播放时就约定好 播放结束后清空展示区 当前音频离开播放列表 剩下空值，使得索引不变
           audio.onended = () => {
             this.nowPlay = {}
-            this.playerList.delete(key)
+            // 不是按顺序删除，是结束时删除列表中的当前audio 所以不能pop
+            // 特定当前audio
+            // 当前的audio是最后压进去的 所以最后一个索引是当前的audio
+            // todo 但是问题来了：使用splice删除之后索引会变
+            // 使用delete索引不变
+            // playerList.length-1是索引
+            delete this.playerList[this.playerList.length-1]
           }
 
 
@@ -122,14 +124,13 @@ export default {
         // this.play(undefined)()
 
         // 1.暂停所有key对应的audio
-        for (const key of this.playerList.keys()) {
-          // todo 因为只是暂停 没有播放结束 所以没有触发结束事件出列表嘛？
-          this.playerList.get(key).pause()
-        }
+        
+        this.playerList.forEach(audio => audio.pause())
 
         // 2.清空展示区和播放列表
         this.nowPlay = 'null'
-        this.playerList.clear()
+        // map有clear array有splice
+        this.playerList.splice(0)
       },
       changeOverlap(){
         this.overlap = !this.overlap
